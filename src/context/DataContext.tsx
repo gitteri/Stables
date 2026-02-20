@@ -3,8 +3,8 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { DashboardData, StablecoinDataRow, StablecoinSummary } from "@/lib/types";
 
-const API_URL =
-  "https://analytics.topledger.xyz/solana/api/queries/14117/results.json?api_key=TOPLEDGER_API_KEY_REDACTED";
+// Use local API endpoint instead of external API
+const API_URL = "/api/stablecoins";
 
 interface DataContextType {
   data: DashboardData | null;
@@ -174,17 +174,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       if (!res.ok) throw new Error(`API request failed: ${res.status}`);
       const json = await res.json();
 
-      let rawRows: Record<string, unknown>[];
-      if (json.query_result?.data?.rows) {
-        rawRows = json.query_result.data.rows;
-      } else if (json.data?.rows) {
-        rawRows = json.data.rows;
-      } else if (Array.isArray(json)) {
-        rawRows = json;
-      } else if (json.rows) {
-        rawRows = json.rows;
-      } else {
-        rawRows = [json];
+      // Our local API returns { data: [...], lastUpdate: "...", count: N }
+      const rawRows: Record<string, unknown>[] = json.data || [];
+
+      if (!rawRows.length) {
+        throw new Error("No data available. Please run the data update job.");
       }
 
       const normalized = rawRows.map(normalizeRow);
