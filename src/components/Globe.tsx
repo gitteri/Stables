@@ -41,14 +41,14 @@ function GlobeWireframe() {
   return (
     <group ref={meshRef}>
       <Sphere args={[1.98, 64, 64]}>
-        <meshPhongMaterial color="#F8F9FB" transparent opacity={0.85} side={THREE.DoubleSide} />
+        <meshPhongMaterial color="#F8FAFC" transparent opacity={0.85} side={THREE.DoubleSide} />
       </Sphere>
       {gridLines.map((points, i) => (
-        <Line key={i} points={points} color="#D1D5DB" lineWidth={0.4} transparent opacity={0.5} />
+        <Line key={i} points={points} color="#CBD5E1" lineWidth={0.4} transparent opacity={0.5} />
       ))}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[2.05, 0.005, 16, 100]} />
-        <meshBasicMaterial color="#9945FF" transparent opacity={0.25} />
+        <meshBasicMaterial color="#4F46E5" transparent opacity={0.25} />
       </mesh>
     </group>
   );
@@ -68,12 +68,12 @@ function IssuerMarker({ info, coin, symbol }: { info: StablecoinIssuerInfo; coin
         <meshBasicMaterial color={color} transparent opacity={0.35} side={THREE.DoubleSide} />
       </mesh>
       <Html distanceFactor={6} style={{ pointerEvents: "none" }}>
-        <div className="bg-white/95 backdrop-blur-sm border border-[#E8ECF1] rounded-lg px-2.5 py-1.5 whitespace-nowrap shadow-md">
+        <div className="bg-white/95 backdrop-blur-sm border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 whitespace-nowrap shadow-md">
           <div className="flex items-center gap-1.5 mb-0.5">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-            <span className="text-[10px] font-bold text-[#0E1117]">{symbol}</span>
+            <span className="text-[10px] font-bold text-[#0F172A]">{symbol}</span>
           </div>
-          {coin && <div className="text-[9px] text-[#8A919E]">{formatCurrency(coin.current_supply)}</div>}
+          {coin && <div className="text-[9px] text-[#64748B]">{formatCurrency(coin.current_supply)}</div>}
         </div>
       </Html>
     </group>
@@ -88,10 +88,10 @@ export default function GlobeVisualization({ stablecoins, height = "500px" }: { 
   }, [stablecoins]);
 
   return (
-    <div style={{ height, width: "100%" }} className="relative bg-[#F8F9FB] rounded-b-xl">
+    <div style={{ height, width: "100%" }} className="relative bg-[#F8FAFC] rounded-b-xl">
       <Canvas camera={{ position: [0, 1, 5], fov: 45 }}>
         <ambientLight intensity={0.6} />
-        <pointLight position={[10, 10, 10]} intensity={0.6} color="#9945FF" />
+        <pointLight position={[10, 10, 10]} intensity={0.6} color="#4F46E5" />
         <pointLight position={[-10, -10, -10]} intensity={0.3} color="#14F195" />
         <GlobeWireframe />
         {Object.entries(STABLECOIN_ISSUERS).map(([symbol, info]) => (

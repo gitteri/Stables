@@ -46,19 +46,19 @@ export default function WorldMap({ stablecoins }: WorldMapProps) {
   return (
     <div className="glass-card p-5">
       <div className="mb-4">
-        <h3 className="text-[15px] font-semibold text-[var(--sol-text)]">Global Issuer Map</h3>
-        <p className="text-[12px] text-[var(--sol-text-muted)] mt-0.5">Stablecoin issuers and their geographic headquarters</p>
+        <h3 className="text-[15px] font-semibold text-[#0F172A]">Global Issuer Map</h3>
+        <p className="text-[12px] text-[#64748B] mt-0.5">Stablecoin issuers and their geographic headquarters</p>
       </div>
-      <div className="relative overflow-hidden rounded-lg bg-[#F8F9FB] p-3">
+      <div className="relative overflow-hidden rounded-lg bg-[#F8FAFC] p-3">
         <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" style={{ maxHeight: "400px" }}>
           {Array.from({ length: 9 }).map((_, i) => (
-            <line key={`v-${i}`} x1={i * (width / 8)} y1={0} x2={i * (width / 8)} y2={height} stroke="#E8ECF1" strokeWidth={0.5} opacity={0.4} />
+            <line key={`v-${i}`} x1={i * (width / 8)} y1={0} x2={i * (width / 8)} y2={height} stroke="#E2E8F0" strokeWidth={0.5} opacity={0.4} />
           ))}
           {Array.from({ length: 7 }).map((_, i) => (
-            <line key={`h-${i}`} x1={0} y1={i * (height / 6)} x2={width} y2={i * (height / 6)} stroke="#E8ECF1" strokeWidth={0.5} opacity={0.4} />
+            <line key={`h-${i}`} x1={0} y1={i * (height / 6)} x2={width} y2={i * (height / 6)} stroke="#E2E8F0" strokeWidth={0.5} opacity={0.4} />
           ))}
           {WORLD_PATHS.map((d, i) => (
-            <path key={i} d={d} fill="#E8ECF1" stroke="#D1D5DB" strokeWidth={0.5} opacity={0.7} />
+            <path key={i} d={d} fill="#E2E8F0" stroke="#CBD5E1" strokeWidth={0.5} opacity={0.7} />
           ))}
           {markers.map((m) => (
             <line key={`ln-${m.symbol}`} x1={width / 2} y1={height / 2} x2={m.x} y2={m.y}
@@ -77,7 +77,7 @@ export default function WorldMap({ stablecoins }: WorldMapProps) {
                   <animate attributeName="opacity" from={0.3} to={0} dur="2s" repeatCount="indefinite" />
                 </circle>
                 <circle cx={marker.x} cy={marker.y} r={isHovered ? radius + 1 : radius} fill={color} opacity={isHovered ? 1 : 0.75} />
-                <text x={marker.x} y={marker.y - radius - 4} textAnchor="middle" fill={isHovered ? "#0E1117" : "#8A919E"} fontSize={isHovered ? 8 : 6} fontWeight={isHovered ? 700 : 500}>
+                <text x={marker.x} y={marker.y - radius - 4} textAnchor="middle" fill={isHovered ? "#0F172A" : "#64748B"} fontSize={isHovered ? 8 : 6} fontWeight={isHovered ? 700 : 500}>
                   {marker.symbol}
                 </text>
               </g>
@@ -88,16 +88,16 @@ export default function WorldMap({ stablecoins }: WorldMapProps) {
           const marker = markers.find((m) => m.symbol === hoveredCoin);
           if (!marker) return null;
           return (
-            <div className="absolute top-3 right-3 bg-white border border-[#E8ECF1] rounded-lg p-3 min-w-[180px] shadow-lg">
+            <div className="absolute top-3 right-3 bg-white border border-[#E2E8F0] rounded-lg p-3 min-w-[180px] shadow-lg">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: getStablecoinColor(marker.symbol) }} />
-                <span className="text-[13px] font-bold text-[#0E1117]">{marker.symbol}</span>
+                <span className="text-[13px] font-bold text-[#0F172A]">{marker.symbol}</span>
               </div>
               <div className="space-y-1 text-[12px]">
-                <div className="flex justify-between"><span className="text-[#8A919E]">Issuer</span><span className="text-[#0E1117]">{marker.info.issuer}</span></div>
-                <div className="flex justify-between"><span className="text-[#8A919E]">Region</span><span className="text-[#0E1117]">{marker.info.region}</span></div>
-                <div className="flex justify-between"><span className="text-[#8A919E]">Type</span><span className="text-[#0E1117]">{marker.info.type}</span></div>
-                {marker.coin && <div className="flex justify-between"><span className="text-[#8A919E]">Supply</span><span className="text-[#0E1117] font-semibold">{formatCurrency(marker.coin.current_supply)}</span></div>}
+                <div className="flex justify-between"><span className="text-[#64748B]">Issuer</span><span className="text-[#0F172A]">{marker.info.issuer}</span></div>
+                <div className="flex justify-between"><span className="text-[#64748B]">Region</span><span className="text-[#0F172A]">{marker.info.region}</span></div>
+                <div className="flex justify-between"><span className="text-[#64748B]">Type</span><span className="text-[#0F172A]">{marker.info.type}</span></div>
+                {marker.coin && <div className="flex justify-between"><span className="text-[#64748B]">Supply</span><span className="text-[#0F172A] font-semibold">{formatCurrency(marker.coin.current_supply)}</span></div>}
               </div>
             </div>
           );

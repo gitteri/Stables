@@ -68,7 +68,7 @@ export default function HistoryCharts({ coin, color }: HistoryChartsProps) {
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   metric === m.key
                     ? "text-white"
-                    : "bg-[#F1F3F6] text-[#8A919E] hover:text-[#3D4350]"
+                    : "bg-[#F1F5F9] text-[#64748B] hover:text-[#475569]"
                 }`}
                 style={
                   metric === m.key
@@ -80,15 +80,15 @@ export default function HistoryCharts({ coin, color }: HistoryChartsProps) {
               </button>
             ))}
           </div>
-          <div className="flex gap-1 bg-[#F1F3F6] rounded-lg p-1">
+          <div className="flex gap-1 bg-[#F1F5F9] rounded-lg p-1">
             {(["7d", "30d", "90d", "all"] as TimeRange[]).map((r) => (
               <button
                 key={r}
                 onClick={() => setRange(r)}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                   range === r
-                    ? "bg-[#9945FF] text-white"
-                    : "bg-[#F1F3F6] text-[#8A919E] hover:text-[#3D4350]"
+                    ? "bg-[#4F46E5] text-white"
+                    : "bg-[#F1F5F9] text-[#64748B] hover:text-[#475569]"
                 }`}
               >
                 {r.toUpperCase()}
@@ -106,29 +106,29 @@ export default function HistoryCharts({ coin, color }: HistoryChartsProps) {
                   <stop offset="100%" stopColor={color} stopOpacity={0.03} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F3F6" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
               <XAxis
                 dataKey="date"
-                tick={{ fill: "#8A919E", fontSize: 11 }}
+                tick={{ fill: "#64748B", fontSize: 11 }}
                 tickFormatter={formatShortDate}
-                stroke="#F1F3F6"
+                stroke="#F1F5F9"
                 interval="preserveStartEnd"
               />
               <YAxis
-                tick={{ fill: "#8A919E", fontSize: 11 }}
+                tick={{ fill: "#64748B", fontSize: 11 }}
                 tickFormatter={(v) => currentMetric.format(v)}
-                stroke="#F1F3F6"
+                stroke="#F1F5F9"
                 width={70}
               />
               <Tooltip
                 contentStyle={{
                   background: "#FFFFFF",
-                  border: "1px solid #E8ECF1",
+                  border: "1px solid #E2E8F0",
                   borderRadius: "8px",
                   padding: "10px 14px",
                   boxShadow: "0 4px 6px -1px rgba(0,0,0,0.06)",
                 }}
-                labelStyle={{ color: "#0E1117", fontWeight: 600, marginBottom: 4 }}
+                labelStyle={{ color: "#0F172A", fontWeight: 600, marginBottom: 4 }}
                 labelFormatter={(v: unknown) => formatShortDate(String(v))}
                 formatter={(value: unknown) => [
                   currentMetric.format(Number(value)),
@@ -145,29 +145,29 @@ export default function HistoryCharts({ coin, color }: HistoryChartsProps) {
             </AreaChart>
           ) : metric === "volume" ? (
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F3F6" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
               <XAxis
                 dataKey="date"
-                tick={{ fill: "#8A919E", fontSize: 11 }}
+                tick={{ fill: "#64748B", fontSize: 11 }}
                 tickFormatter={formatShortDate}
-                stroke="#F1F3F6"
+                stroke="#F1F5F9"
                 interval="preserveStartEnd"
               />
               <YAxis
-                tick={{ fill: "#8A919E", fontSize: 11 }}
+                tick={{ fill: "#64748B", fontSize: 11 }}
                 tickFormatter={(v) => currentMetric.format(v)}
-                stroke="#F1F3F6"
+                stroke="#F1F5F9"
                 width={70}
               />
               <Tooltip
                 contentStyle={{
                   background: "#FFFFFF",
-                  border: "1px solid #E8ECF1",
+                  border: "1px solid #E2E8F0",
                   borderRadius: "8px",
                   padding: "10px 14px",
                   boxShadow: "0 4px 6px -1px rgba(0,0,0,0.06)",
                 }}
-                labelStyle={{ color: "#0E1117", fontWeight: 600, marginBottom: 4 }}
+                labelStyle={{ color: "#0F172A", fontWeight: 600, marginBottom: 4 }}
                 labelFormatter={(v: unknown) => formatShortDate(String(v))}
                 formatter={(value: unknown) => [
                   currentMetric.format(Number(value)),
@@ -178,29 +178,29 @@ export default function HistoryCharts({ coin, color }: HistoryChartsProps) {
             </BarChart>
           ) : (
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F3F6" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
               <XAxis
                 dataKey="date"
-                tick={{ fill: "#8A919E", fontSize: 11 }}
+                tick={{ fill: "#64748B", fontSize: 11 }}
                 tickFormatter={formatShortDate}
-                stroke="#F1F3F6"
+                stroke="#F1F5F9"
                 interval="preserveStartEnd"
               />
               <YAxis
-                tick={{ fill: "#8A919E", fontSize: 11 }}
+                tick={{ fill: "#64748B", fontSize: 11 }}
                 tickFormatter={(v) => currentMetric.format(v)}
-                stroke="#F1F3F6"
+                stroke="#F1F5F9"
                 width={70}
               />
               <Tooltip
                 contentStyle={{
                   background: "#FFFFFF",
-                  border: "1px solid #E8ECF1",
+                  border: "1px solid #E2E8F0",
                   borderRadius: "8px",
                   padding: "10px 14px",
                   boxShadow: "0 4px 6px -1px rgba(0,0,0,0.06)",
                 }}
-                labelStyle={{ color: "#0E1117", fontWeight: 600, marginBottom: 4 }}
+                labelStyle={{ color: "#0F172A", fontWeight: 600, marginBottom: 4 }}
                 labelFormatter={(v: unknown) => formatShortDate(String(v))}
                 formatter={(value: unknown) => [
                   currentMetric.format(Number(value)),
@@ -222,25 +222,25 @@ export default function HistoryCharts({ coin, color }: HistoryChartsProps) {
 
       {/* Summary Stats */}
       <div className="glass-card p-5">
-        <h3 className="text-[15px] font-semibold text-[#0E1117] mb-4">
+        <h3 className="text-[15px] font-semibold text-[#0F172A] mb-4">
           Historical Summary
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-[11px] text-[#8A919E] mb-1">
+            <div className="text-[11px] text-[#64748B] mb-1">
               Avg Daily Volume ({range})
             </div>
-            <div className="text-sm font-semibold text-[#0E1117]">
+            <div className="text-sm font-semibold text-[#0F172A]">
               {formatCurrency(
                 chartData.reduce((s, d) => s + d.volume, 0) / chartData.length
               )}
             </div>
           </div>
           <div>
-            <div className="text-[11px] text-[#8A919E] mb-1">
+            <div className="text-[11px] text-[#64748B] mb-1">
               Avg Daily Txns ({range})
             </div>
-            <div className="text-sm font-semibold text-[#0E1117]">
+            <div className="text-sm font-semibold text-[#0F172A]">
               {formatNumber(
                 Math.round(
                   chartData.reduce((s, d) => s + d.transactions, 0) /
@@ -250,26 +250,26 @@ export default function HistoryCharts({ coin, color }: HistoryChartsProps) {
             </div>
           </div>
           <div>
-            <div className="text-[11px] text-[#8A919E] mb-1">
+            <div className="text-[11px] text-[#64748B] mb-1">
               Peak Supply ({range})
             </div>
-            <div className="text-sm font-semibold text-[#0E1117]">
+            <div className="text-sm font-semibold text-[#0F172A]">
               {formatCurrency(Math.max(...chartData.map((d) => d.supply)))}
             </div>
           </div>
           <div>
-            <div className="text-[11px] text-[#8A919E] mb-1">
+            <div className="text-[11px] text-[#64748B] mb-1">
               Peak Volume ({range})
             </div>
-            <div className="text-sm font-semibold text-[#0E1117]">
+            <div className="text-sm font-semibold text-[#0F172A]">
               {formatCurrency(Math.max(...chartData.map((d) => d.volume)))}
             </div>
           </div>
           <div>
-            <div className="text-[11px] text-[#8A919E] mb-1">
+            <div className="text-[11px] text-[#64748B] mb-1">
               Avg Wallets ({range})
             </div>
-            <div className="text-sm font-semibold text-[#0E1117]">
+            <div className="text-sm font-semibold text-[#0F172A]">
               {formatNumber(
                 Math.round(
                   chartData.reduce((s, d) => s + d.wallets, 0) /
@@ -279,10 +279,10 @@ export default function HistoryCharts({ coin, color }: HistoryChartsProps) {
             </div>
           </div>
           <div>
-            <div className="text-[11px] text-[#8A919E] mb-1">
+            <div className="text-[11px] text-[#64748B] mb-1">
               Data Points
             </div>
-            <div className="text-sm font-semibold text-[#0E1117]">
+            <div className="text-sm font-semibold text-[#0F172A]">
               {chartData.length} days
             </div>
           </div>

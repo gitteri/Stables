@@ -1,67 +1,70 @@
 @import "tailwindcss";
 
 :root {
-  --sol-purple: #9945FF;
-  --sol-purple-light: #B97DFF;
-  --sol-purple-dark: #7C2FE6;
+  --sol-indigo: #4F46E5;
+  --sol-indigo-light: #6366F1;
+  --sol-indigo-dark: #4338CA;
   --sol-green: #14F195;
   --sol-green-dark: #0ECB7C;
   --sol-blue: #00D1FF;
   --sol-bg: #FFFFFF;
-  --sol-bg-secondary: #F8F9FB;
-  --sol-bg-tertiary: #F1F3F6;
-  --sol-sidebar: #FBFBFD;
+  --sol-bg-secondary: #F1F5F9;
+  --sol-bg-tertiary: #E2E8F0;
+  --sol-sidebar: #FFFFFF;
   --sol-card: #FFFFFF;
-  --sol-card-hover: #F8F9FB;
-  --sol-border: #E8ECF1;
-  --sol-border-light: #F1F3F6;
-  --sol-text: #0E1117;
-  --sol-text-secondary: #3D4350;
-  --sol-text-muted: #8A919E;
-  --sol-text-light: #B0B7C3;
+  --sol-card-hover: #F8FAFC;
+  --sol-border: #E2E8F0;
+  --sol-border-light: #F1F5F9;
+  --sol-text: #0F172A;
+  --sol-text-secondary: #475569;
+  --sol-text-muted: #64748B;
+  --sol-text-light: #94A3B8;
   --sol-gradient-1: linear-gradient(135deg, #9945FF 0%, #14F195 100%);
   --sol-gradient-2: linear-gradient(135deg, #00D1FF 0%, #9945FF 100%);
-  --sol-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --sol-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --sol-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-  --sol-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --sol-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --sol-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --sol-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --sol-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --background: #FFFFFF;
-  --foreground: #0E1117;
+  --foreground: #0F172A;
+  --radius: 0.5rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-sol-purple: #9945FF;
+  --color-sol-indigo: #4F46E5;
   --color-sol-green: #14F195;
   --color-sol-blue: #00D1FF;
-  --color-sol-dark: #0E1117;
-  --color-sol-darker: #0E1117;
+  --color-sol-dark: #0F172A;
+  --color-sol-darker: #0F172A;
   --color-sol-card: #FFFFFF;
-  --color-sol-card-hover: #F8F9FB;
-  --color-sol-border: #E8ECF1;
-  --color-sol-text: #0E1117;
-  --color-sol-text-muted: #8A919E;
-  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "SF Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --color-sol-card-hover: #F8FAFC;
+  --color-sol-border: #E2E8F0;
+  --color-sol-text: #0F172A;
+  --color-sol-text-muted: #64748B;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #D1D5DB #F3F4F6;
+  scrollbar-color: #CBD5E1 #F1F5F9;
+  box-sizing: border-box;
+  font-feature-settings: 'rlig' 1, 'calt' 1;
 }
 
 body {
   background: var(--sol-bg);
   color: var(--sol-text);
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Gradient text */
+/* Gradient text — Solana brand gradient only for decorative accents */
 .gradient-text {
   background: var(--sol-gradient-1);
   -webkit-background-clip: text;
@@ -76,18 +79,18 @@ body {
   background-clip: text;
 }
 
-/* Clean card */
+/* Card */
 .glass-card {
   background: var(--sol-card);
-  border: 1px solid var(--sol-border);
+  border: 1px solid #E2E8F0;
   border-radius: 12px;
-  box-shadow: var(--sol-shadow-sm);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.05));
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .glass-card:hover {
   box-shadow: var(--sol-shadow-md);
-  border-color: #D1D5DB;
+  border-color: #CBD5E1;
 }
 
 /* Pulse animation */
@@ -107,7 +110,7 @@ body {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #F1F3F6 25%, #E8ECF1 50%, #F1F3F6 75%);
+  background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
   border-radius: 8px;
@@ -115,7 +118,7 @@ body {
 
 /* Table styles */
 .data-table th {
-  background: var(--sol-bg-secondary);
+  background: #F8FAFC;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -124,18 +127,18 @@ body {
 }
 
 .data-table tr {
-  border-bottom: 1px solid var(--sol-border-light);
+  border-bottom: 1px solid #E2E8F0;
   transition: background 0.15s ease;
 }
 
 .data-table tr:hover {
-  background: var(--sol-bg-secondary);
+  background: #F8FAFC;
 }
 
 /* Recharts tooltip */
 .custom-tooltip {
   background: #FFFFFF !important;
-  border: 1px solid var(--sol-border) !important;
+  border: 1px solid #E2E8F0 !important;
   border-radius: 8px !important;
   padding: 10px 14px !important;
   box-shadow: var(--sol-shadow-lg) !important;
@@ -158,29 +161,31 @@ body {
 
 /* Sidebar */
 .sidebar-link {
-  display: flex;
+  display: grid;
+  grid-template-columns: 24px 1fr;
   align-items: center;
   gap: 12px;
   padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 13.5px;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--sol-text-secondary);
   transition: all 0.15s ease;
 }
 
 .sidebar-link:hover {
-  background: var(--sol-bg-tertiary);
-  color: var(--sol-text);
+  background: #F8FAFC;
+  font-weight: 600;
 }
 
 .sidebar-link.active {
-  background: #F3EAFF;
-  color: var(--sol-purple);
+  background: #F8FAFC;
+  color: var(--sol-text);
+  font-weight: 600;
 }
 
 .sidebar-link.active svg {
-  color: var(--sol-purple);
+  color: #4F46E5;
 }
 
 /* Section header */
@@ -198,45 +203,48 @@ body {
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid;
 }
 
 .badge-purple {
-  background: #F3EAFF;
-  color: #7C2FE6;
+  background: #EEF2FF;
+  color: #4F46E5;
+  border-color: #C7D2FE;
 }
 
 .badge-green {
   background: #ECFDF5;
   color: #059669;
+  border-color: #A7F3D0;
 }
 
 .badge-blue {
   background: #EFF6FF;
   color: #2563EB;
+  border-color: #BFDBFE;
 }
 
 .badge-amber {
   background: #FFFBEB;
   color: #D97706;
+  border-color: #FDE68A;
 }
 
 /* Metric label */
 .metric-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--sol-text-muted);
-  letter-spacing: 0.01em;
 }
 
 .metric-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--sol-text);
+  font-size: 30px;
+  font-weight: 600;
+  color: #0F172A;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }

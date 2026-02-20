@@ -29,7 +29,7 @@ export default function RootLayout({
       <body className="antialiased">
         <DataProvider>
           <Sidebar />
-          <div className="ml-[240px] min-h-screen bg-[var(--sol-bg)]">
+          <div className="ml-[312px] min-h-screen bg-[var(--sol-bg)]">
             <main>{children}</main>
           </div>
         </DataProvider>

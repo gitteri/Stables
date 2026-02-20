@@ -50,22 +50,22 @@ export default function VolumeChart({ data }: VolumeChartProps) {
     <div className="glass-card p-5">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
-          <h3 className="text-[15px] font-semibold text-[#0E1117]">
+          <h3 className="text-[15px] font-semibold text-[#0F172A]">
             Daily Transfer Volume
           </h3>
-          <p className="text-[12px] text-[#8A919E] mt-1">
+          <p className="text-[12px] text-[#64748B] mt-1">
             Daily volume across all stablecoins
           </p>
         </div>
-        <div className="flex gap-1 bg-[#F1F3F6] rounded-lg p-1">
+        <div className="flex gap-1 bg-[#F1F5F9] rounded-lg p-1">
           {(["7d", "30d", "90d", "all"] as TimeRange[]).map((r) => (
             <button
               key={r}
               onClick={() => setRange(r)}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 range === r
-                  ? "bg-[#9945FF] text-white"
-                  : "bg-[#F1F3F6] text-[#8A919E] hover:text-[#3D4350]"
+                  ? "bg-[#4F46E5] text-white"
+                  : "bg-[#F1F5F9] text-[#64748B] hover:text-[#475569]"
               }`}
             >
               {r.toUpperCase()}
@@ -75,29 +75,29 @@ export default function VolumeChart({ data }: VolumeChartProps) {
       </div>
       <ResponsiveContainer width="100%" height={360}>
         <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#F1F3F6" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
           <XAxis
             dataKey="date"
-            tick={{ fill: "#8A919E", fontSize: 11 }}
+            tick={{ fill: "#64748B", fontSize: 11 }}
             tickFormatter={formatShortDate}
-            stroke="#F1F3F6"
+            stroke="#F1F5F9"
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fill: "#8A919E", fontSize: 11 }}
+            tick={{ fill: "#64748B", fontSize: 11 }}
             tickFormatter={(v) => formatCurrency(v, 0)}
-            stroke="#F1F3F6"
+            stroke="#F1F5F9"
             width={70}
           />
           <Tooltip
             contentStyle={{
               background: "#FFFFFF",
-              border: "1px solid #E8ECF1",
+              border: "1px solid #E2E8F0",
               borderRadius: "8px",
               padding: "10px 14px",
               boxShadow: "0 4px 6px -1px rgba(0,0,0,0.06)",
             }}
-            labelStyle={{ color: "#0E1117", fontWeight: 600, marginBottom: 8 }}
+            labelStyle={{ color: "#0F172A", fontWeight: 600, marginBottom: 8 }}
             labelFormatter={(v: unknown) => formatShortDate(String(v))}
             formatter={(value: unknown, name: unknown) => [
               formatCurrency(Number(value)),
@@ -107,7 +107,7 @@ export default function VolumeChart({ data }: VolumeChartProps) {
           <Legend
             wrapperStyle={{ paddingTop: 16, fontSize: 12 }}
             formatter={(value: string) => (
-              <span style={{ color: "#8A919E" }}>{value}</span>
+              <span style={{ color: "#64748B" }}>{value}</span>
             )}
           />
           {topCoins.map((coin) => (
