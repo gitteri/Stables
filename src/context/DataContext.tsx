@@ -35,7 +35,7 @@ function normalizeRow(row: Record<string, unknown>): StablecoinDataRow {
   const symbolKey = findKey(["symbol", "token_symbol", "ticker"]);
   const decimalsKey = findKey(["decimals", "decimal"]);
   const supplyKey = findKey([
-    "daily_supply", "supply", "total_supply", "circulating_supply", "market_cap",
+    "supply", "daily_supply", "total_supply", "circulating_supply", "market_cap",
     "daily_circulating_supply", "current_supply",
   ]);
   const volumeKey = findKey([
@@ -60,14 +60,16 @@ function normalizeRow(row: Record<string, unknown>): StablecoinDataRow {
   const volume = volumeKey ? Number(row[volumeKey]) || 0 : 0;
   const p2pVolume = p2pVolumeKey ? (row[p2pVolumeKey] ? Number(row[p2pVolumeKey]) : 0) : 0;
 
+  // Use actual Solana on-chain supply data
+  const supply = supplyKey ? Number(row[supplyKey]) || 0 : 0;
+
   return {
     date: dateKey ? String(row[dateKey]).split("T")[0] : "",
     mint_address: mintKey ? String(row[mintKey]) : "",
     name: fullName,
     symbol: symbolKey ? String(row[symbolKey]) : derivedSymbol,
     decimals: decimalsKey ? Number(row[decimalsKey]) : 6,
-    // Use cumulative volume across time as proxy for supply (total ecosystem value flow)
-    daily_supply: supplyKey ? Number(row[supplyKey]) : volume,
+    daily_supply: supply,
     daily_transfer_volume: volume,
     daily_transactions: txKey ? Number(row[txKey]) || 0 : 0,
     daily_active_wallets: walletsKey ? Number(row[walletsKey]) || 0 : 0,

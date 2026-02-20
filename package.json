@@ -7,11 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "update-data": "tsx scripts/update-data.ts"
+    "update-data": "tsx scripts/update-data.ts",
+    "update-supply": "tsx scripts/update-supply.ts",
+    "update-all": "npm run update-data && npm run update-supply"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
+    "@solana/web3.js": "^1.98.4",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node-cron": "^3.0.11",
     "better-sqlite3": "^12.6.2",

@@ -32,6 +32,7 @@ function initSchema(db: Database.Database) {
       volume REAL NOT NULL DEFAULT 0,
       p2p_volume REAL,
       transactions INTEGER NOT NULL DEFAULT 0,
+      supply REAL DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       UNIQUE(date, mint_address)
     );
@@ -46,6 +47,9 @@ function initSchema(db: Database.Database) {
       records_updated INTEGER DEFAULT 0,
       status TEXT DEFAULT 'success'
     );
+
+    -- Add supply column if it doesn't exist (for existing databases)
+    ALTER TABLE stablecoin_data ADD COLUMN supply REAL DEFAULT 0;
   `);
 }
 
@@ -64,14 +68,15 @@ export interface StablecoinRow {
   volume: number;
   p2p_volume: number | null;
   transactions: number;
+  supply?: number;
 }
 
 export function insertStablecoinData(rows: StablecoinRow[]) {
   const db = getDb();
   const insert = db.prepare(`
     INSERT OR REPLACE INTO stablecoin_data
-    (date, mint_address, mint_name, holders, volume, p2p_volume, transactions)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    (date, mint_address, mint_name, holders, volume, p2p_volume, transactions, supply)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   const insertMany = db.transaction((rows: StablecoinRow[]) => {
@@ -83,7 +88,8 @@ export function insertStablecoinData(rows: StablecoinRow[]) {
         row.holders,
         row.volume,
         row.p2p_volume,
-        row.transactions
+        row.transactions,
+        row.supply || 0
       );
     }
   });
@@ -106,7 +112,8 @@ export function getAllStablecoinData(): StablecoinRow[] {
       holders,
       volume,
       p2p_volume,
-      transactions
+      transactions,
+      supply
     FROM stablecoin_data
     ORDER BY date ASC, mint_name ASC
   `).all() as StablecoinRow[];

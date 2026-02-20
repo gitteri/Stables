@@ -1,9 +1,10 @@
 import { insertStablecoinData, type StablecoinRow } from "./db";
+import { updateAllSupplyData } from "./fetch-supply";
 
 const API_URL =
   "https://analytics.topledger.xyz/solana/api/queries/14117/results.json?api_key=TOPLEDGER_API_KEY_REDACTED";
 
-export async function updateStablecoinData() {
+export async function updateStablecoinData(includeSupply = true) {
   console.log("[Update] Fetching data from TopLedger API...");
 
   try {
@@ -38,6 +39,7 @@ export async function updateStablecoinData() {
       volume: row.volume || 0,
       p2p_volume: row.p2p_volume,
       transactions: row.fee_payer || 0,
+      supply: 0, // Will be updated by supply fetch
     }));
 
     insertStablecoinData(rows);
@@ -45,6 +47,12 @@ export async function updateStablecoinData() {
     console.log(`[Update] Successfully updated ${rows.length} records`);
     console.log(`[Update] Date range: ${rows[rows.length - 1].date} to ${rows[0].date}`);
     console.log(`[Update] Unique tokens: ${new Set(rows.map(r => r.mint_name)).size}`);
+
+    // Fetch on-chain supply data
+    if (includeSupply) {
+      console.log("\n");
+      await updateAllSupplyData();
+    }
   } catch (error) {
     console.error("[Update] Error updating data:", error);
     throw error;
