@@ -31,7 +31,7 @@ function normalizeRow(row: Record<string, unknown>): StablecoinDataRow {
 
   const dateKey = findKey(["date", "dt", "day", "block_date", "period"]);
   const mintKey = findKey(["mint_address", "mint", "token_mint", "token_address", "address"]);
-  const nameKey = findKey(["name", "token_name", "stablecoin_name", "stablecoin"]);
+  const nameKey = findKey(["name", "token_name", "stablecoin_name", "stablecoin", "mint_name"]);
   const symbolKey = findKey(["symbol", "token_symbol", "ticker"]);
   const decimalsKey = findKey(["decimals", "decimal"]);
   const supplyKey = findKey([
@@ -44,23 +44,34 @@ function normalizeRow(row: Record<string, unknown>): StablecoinDataRow {
   ]);
   const txKey = findKey([
     "daily_transactions", "transactions", "tx_count", "num_transactions",
-    "daily_txns", "txns", "total_transactions", "num_txns",
+    "daily_txns", "txns", "total_transactions", "num_txns", "fee_payer",
   ]);
   const walletsKey = findKey([
     "daily_active_wallets", "active_wallets", "unique_wallets", "active_addresses",
-    "daily_active_addresses", "wallets", "unique_addresses",
+    "daily_active_addresses", "wallets", "unique_addresses", "holders",
   ]);
+
+  // Extract name from mint_name and derive symbol
+  const fullName = nameKey ? String(row[nameKey]) : "";
+  const derivedSymbol = fullName.split(" ")[0] || fullName;
+
+  // Get p2p_volume if available
+  const p2pVolumeKey = findKey(["p2p_volume", "p2p_vol"]);
+  const volume = volumeKey ? Number(row[volumeKey]) || 0 : 0;
+  const p2pVolume = p2pVolumeKey ? (row[p2pVolumeKey] ? Number(row[p2pVolumeKey]) : 0) : 0;
 
   return {
     date: dateKey ? String(row[dateKey]).split("T")[0] : "",
     mint_address: mintKey ? String(row[mintKey]) : "",
-    name: nameKey ? String(row[nameKey]) : "",
-    symbol: symbolKey ? String(row[symbolKey]) : "",
+    name: fullName,
+    symbol: symbolKey ? String(row[symbolKey]) : derivedSymbol,
     decimals: decimalsKey ? Number(row[decimalsKey]) : 6,
-    daily_supply: supplyKey ? Number(row[supplyKey]) : 0,
-    daily_transfer_volume: volumeKey ? Number(row[volumeKey]) : 0,
-    daily_transactions: txKey ? Number(row[txKey]) : 0,
-    daily_active_wallets: walletsKey ? Number(row[walletsKey]) : 0,
+    // Use cumulative volume across time as proxy for supply (total ecosystem value flow)
+    daily_supply: supplyKey ? Number(row[supplyKey]) : volume,
+    daily_transfer_volume: volume,
+    daily_transactions: txKey ? Number(row[txKey]) || 0 : 0,
+    daily_active_wallets: walletsKey ? Number(row[walletsKey]) || 0 : 0,
+    p2p_volume: p2pVolume,
   };
 }
 

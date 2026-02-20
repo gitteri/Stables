@@ -51,10 +51,10 @@ export default function SupplyChart({ data }: SupplyChartProps) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
           <h3 className="text-lg font-semibold text-sol-text">
-            Total Supply Over Time
+            Volume Trends Over Time
           </h3>
           <p className="text-sm text-sol-text-muted mt-1">
-            Stacked supply of all stablecoins on Solana
+            Daily transfer volume by stablecoin on Solana
           </p>
         </div>
         <div className="flex gap-1 bg-sol-dark rounded-lg p-1">

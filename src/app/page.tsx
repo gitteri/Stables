@@ -66,22 +66,11 @@ export default function DashboardPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard
-          title="Total Supply"
-          value={formatCurrency(data.totalSupply)}
+          title="Daily Volume"
+          value={formatCurrency(data.totalVolume)}
           change={data.supplyChange7d}
           subtitle="7d change"
           delay={1}
-          icon={
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          }
-        />
-        <StatCard
-          title="24h Volume"
-          value={formatCurrency(data.totalVolume)}
-          subtitle="transfer volume"
-          delay={2}
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -89,9 +78,20 @@ export default function DashboardPage() {
           }
         />
         <StatCard
-          title="24h Transactions"
+          title="Cumulative Volume"
+          value={formatCurrency(data.totalSupply)}
+          subtitle="total value flow"
+          delay={2}
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          }
+        />
+        <StatCard
+          title="Daily Transactions"
           value={formatNumber(data.totalTransactions)}
-          subtitle="daily txns"
+          subtitle="total txns"
           delay={3}
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -100,9 +100,9 @@ export default function DashboardPage() {
           }
         />
         <StatCard
-          title="Active Wallets"
+          title="Total Holders"
           value={formatNumber(data.totalActiveWallets)}
-          subtitle="daily unique"
+          subtitle="unique wallets"
           delay={4}
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

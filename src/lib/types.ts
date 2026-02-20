@@ -4,11 +4,12 @@ export interface StablecoinDataRow {
   name: string;
   symbol: string;
   decimals: number;
-  daily_supply: number;
+  daily_supply: number; // Derived from volume data as proxy
   daily_transfer_volume: number;
   daily_transactions: number;
   daily_active_wallets: number;
-  [key: string]: string | number;
+  p2p_volume?: number; // Peer-to-peer volume
+  [key: string]: string | number | undefined;
 }
 
 export interface StablecoinSummary {
