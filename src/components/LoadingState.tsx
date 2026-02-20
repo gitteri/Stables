@@ -2,27 +2,24 @@
 
 export function DashboardSkeleton() {
   return (
-    <div className="space-y-6 animate-pulse">
-      {/* Stats row */}
+    <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="glass-card p-6">
-            <div className="skeleton h-4 w-24 mb-3" />
-            <div className="skeleton h-8 w-32 mb-2" />
-            <div className="skeleton h-3 w-20" />
+          <div key={i} className="glass-card p-5">
+            <div className="skeleton h-3 w-20 mb-3" />
+            <div className="skeleton h-7 w-28 mb-2" />
+            <div className="skeleton h-3 w-16" />
           </div>
         ))}
       </div>
-      {/* Chart */}
-      <div className="glass-card p-6">
-        <div className="skeleton h-4 w-40 mb-4" />
-        <div className="skeleton h-64 w-full" />
+      <div className="glass-card p-5">
+        <div className="skeleton h-3 w-32 mb-4" />
+        <div className="skeleton h-[280px] w-full" />
       </div>
-      {/* Table */}
-      <div className="glass-card p-6">
-        <div className="skeleton h-4 w-40 mb-4" />
+      <div className="glass-card p-5">
+        <div className="skeleton h-3 w-32 mb-4" />
         {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="skeleton h-12 w-full mb-2" />
+          <div key={i} className="skeleton h-11 w-full mb-2" />
         ))}
       </div>
     </div>
@@ -32,18 +29,18 @@ export function DashboardSkeleton() {
 export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
     <div className="glass-card p-12 text-center">
-      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2">
+      <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2">
           <circle cx="12" cy="12" r="10" />
           <path d="M12 8v4M12 16h.01" strokeLinecap="round" />
         </svg>
       </div>
-      <h3 className="text-lg font-semibold text-sol-text mb-2">Failed to Load Data</h3>
-      <p className="text-sol-text-muted mb-6 max-w-md mx-auto">{message}</p>
+      <h3 className="text-[15px] font-semibold text-[var(--sol-text)] mb-1">Failed to Load Data</h3>
+      <p className="text-[13px] text-[var(--sol-text-muted)] mb-5 max-w-sm mx-auto">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-6 py-2.5 rounded-lg bg-sol-purple/20 text-sol-purple border border-sol-purple/30 hover:bg-sol-purple/30 transition-all font-medium"
+          className="px-4 py-2 rounded-lg bg-[#9945FF] text-white text-[13px] font-medium hover:bg-[#7C2FE6] transition-colors"
         >
           Retry
         </button>

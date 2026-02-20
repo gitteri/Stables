@@ -29,11 +29,11 @@ export default function DominanceChart({ data }: DominanceChartProps) {
   }, [data]);
 
   return (
-    <div className="glass-card p-6">
-      <h3 className="text-lg font-semibold text-sol-text mb-2">
+    <div className="glass-card p-5">
+      <h3 className="text-[15px] font-semibold text-[#0E1117] mb-2">
         Market Dominance
       </h3>
-      <p className="text-sm text-sol-text-muted mb-6">
+      <p className="text-[12px] text-[#8A919E] mb-6">
         Share of total stablecoin supply on Solana
       </p>
 
@@ -60,10 +60,11 @@ export default function DominanceChart({ data }: DominanceChartProps) {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  background: "rgba(17, 17, 40, 0.95)",
-                  border: "1px solid #1E1E3F",
-                  borderRadius: "12px",
-                  padding: "12px",
+                  background: "#FFFFFF",
+                  border: "1px solid #E8ECF1",
+                  borderRadius: "8px",
+                  padding: "10px 14px",
+                  boxShadow: "0 4px 6px -1px rgba(0,0,0,0.06)",
                 }}
                 formatter={(value: unknown, name: unknown) => [
                   formatCurrency(Number(value)),
@@ -77,22 +78,22 @@ export default function DominanceChart({ data }: DominanceChartProps) {
           {pieData.map((item) => (
             <div
               key={item.name}
-              className="flex items-center justify-between p-2.5 rounded-lg hover:bg-sol-card transition-colors"
+              className="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#F8F9FB] transition-colors"
             >
               <div className="flex items-center gap-3">
                 <div
                   className="w-3 h-3 rounded-full flex-shrink-0"
                   style={{ backgroundColor: getStablecoinColor(item.name) }}
                 />
-                <span className="text-sm font-medium text-sol-text">
+                <span className="text-sm font-medium text-[#0E1117]">
                   {item.name}
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-sm font-semibold text-sol-text">
+                <span className="text-sm font-semibold text-[#0E1117]">
                   {item.share.toFixed(1)}%
                 </span>
-                <span className="text-xs text-sol-text-muted ml-2">
+                <span className="text-xs text-[#8A919E] ml-2">
                   {formatCurrency(item.value)}
                 </span>
               </div>
