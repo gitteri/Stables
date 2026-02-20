@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+:root {
+  --sol-purple: #9945FF;
+  --sol-green: #14F195;
+  --sol-blue: #00D1FF;
+  --sol-dark: #0B0B1A;
+  --sol-darker: #06060F;
+  --sol-card: #111128;
+  --sol-card-hover: #1A1A3E;
+  --sol-border: #1E1E3F;
+  --sol-text: #E1E1FF;
+  --sol-text-muted: #8888AA;
+  --sol-gradient-1: linear-gradient(135deg, #9945FF 0%, #14F195 100%);
+  --sol-gradient-2: linear-gradient(135deg, #00D1FF 0%, #9945FF 100%);
+  --sol-gradient-3: linear-gradient(135deg, #14F195 0%, #00D1FF 100%);
+  --background: #06060F;
+  --foreground: #E1E1FF;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-sol-purple: #9945FF;
+  --color-sol-green: #14F195;
+  --color-sol-blue: #00D1FF;
+  --color-sol-dark: #0B0B1A;
+  --color-sol-darker: #06060F;
+  --color-sol-card: #111128;
+  --color-sol-card-hover: #1A1A3E;
+  --color-sol-border: #1E1E3F;
+  --color-sol-text: #E1E1FF;
+  --color-sol-text-muted: #8888AA;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1E1E3F #06060F;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: var(--sol-gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-blue {
+  background: var(--sol-gradient-2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass card effect */
+.glass-card {
+  background: rgba(17, 17, 40, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(30, 30, 63, 0.8);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(153, 69, 255, 0.3);
+  box-shadow: 0 0 30px rgba(153, 69, 255, 0.1);
+}
+
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 40px rgba(153, 69, 255, 0.15);
+}
+
+.glow-green {
+  box-shadow: 0 0 40px rgba(20, 241, 149, 0.15);
+}
+
+/* Animated gradient border */
+.gradient-border {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 16px;
+  background: var(--sol-gradient-1);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Pulse animation */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Skeleton loading */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #111128 25%, #1A1A3E 50%, #111128 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* Table styles */
+.data-table th {
+  background: rgba(17, 17, 40, 0.9);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.data-table tr {
+  border-bottom: 1px solid rgba(30, 30, 63, 0.5);
+  transition: background 0.2s ease;
+}
+
+.data-table tr:hover {
+  background: rgba(153, 69, 255, 0.05);
+}
+
+/* Custom recharts tooltip */
+.custom-tooltip {
+  background: rgba(17, 17, 40, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(30, 30, 63, 0.8) !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-in-delay-1 { animation-delay: 0.1s; opacity: 0; }
+.fade-in-delay-2 { animation-delay: 0.2s; opacity: 0; }
+.fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
+.fade-in-delay-4 { animation-delay: 0.4s; opacity: 0; }
