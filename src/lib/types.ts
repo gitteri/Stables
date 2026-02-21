@@ -212,3 +212,22 @@ export const STABLECOIN_COLORS: Record<string, string> = {
 export function getStablecoinColor(symbol: string): string {
   return STABLECOIN_COLORS[symbol] || "#9945FF";
 }
+
+// Stablecoin symbol → currency peg (shared by Globe and filter UI)
+export const STABLECOIN_CURRENCY: Record<string, string> = {
+  USDC: "USD", USDT: "USD", PYUSD: "USD", FDUSD: "USD",
+  USDG: "USD", USDS: "USD", USDY: "USD", USDe: "USD",
+  GGUSD: "USD", sUSD: "USD", AUSD: "USD", UXD: "USD",
+  ISC: "USD", ZUSD: "USD", YUSDC: "USD", YUSDT: "USD",
+  BUIDL: "USD", "USD*": "USD",
+  EURC: "EUR", EUROe: "EUR", VEUR: "EUR",
+  VGBP: "GBP",
+  VCHF: "CHF",
+  BRZ: "BRL",
+  ZARP: "ZAR",
+  GYEN: "JPY",
+  MXNe: "MXN",
+  NGN: "NGN",
+  TRYB: "TRY",
+  VNXAU: "XAU",
+};

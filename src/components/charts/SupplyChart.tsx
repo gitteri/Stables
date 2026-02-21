@@ -44,7 +44,7 @@ export default function SupplyChart({ data }: SupplyChartProps) {
     });
   }, [data, range]);
 
-  const topCoins = data.stablecoins.slice(0, 8);
+  const topCoins = data.stablecoins;
 
   return (
     <div className="glass-card p-6">

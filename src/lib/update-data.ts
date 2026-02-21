@@ -1,8 +1,8 @@
 import { insertStablecoinData, type StablecoinRow } from "./db";
 import { updateAllSupplyData } from "./fetch-supply";
 
-const API_URL =
-  "https://analytics.topledger.xyz/solana/api/queries/14117/results.json?api_key=TOPLEDGER_API_KEY_REDACTED";
+const API_KEY = process.env.TOPLEDGER_API_KEY;
+const API_URL = `https://analytics.topledger.xyz/solana/api/queries/14117/results.json?api_key=${API_KEY}`;
 
 export async function updateStablecoinData(includeSupply = true) {
   console.log("[Update] Fetching data from TopLedger API...");

@@ -44,7 +44,7 @@ export default function VolumeChart({ data }: VolumeChartProps) {
     });
   }, [data, range]);
 
-  const topCoins = data.stablecoins.slice(0, 6);
+  const topCoins = data.stablecoins;
 
   return (
     <div className="glass-card p-6">

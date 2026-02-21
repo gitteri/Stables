@@ -1,7 +1,7 @@
 import { StablecoinDataRow, StablecoinSummary, DashboardData } from "./types";
 
-const API_URL =
-  "https://analytics.topledger.xyz/solana/api/queries/14117/results.json?api_key=TOPLEDGER_API_KEY_REDACTED";
+const API_KEY = process.env.TOPLEDGER_API_KEY;
+const API_URL = `https://analytics.topledger.xyz/solana/api/queries/14117/results.json?api_key=${API_KEY}`;
 
 function normalizeRow(row: Record<string, unknown>): StablecoinDataRow {
   const keys = Object.keys(row);

@@ -1,174 +1,313 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Sphere, Html, Line } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import { STABLECOIN_ISSUERS, getStablecoinColor, StablecoinIssuerInfo } from "@/lib/types";
-import { StablecoinSummary } from "@/lib/types";
-import { formatCurrency } from "@/lib/format";
+import * as topojson from "topojson-client";
+import { geoPath, geoEquirectangular } from "d3-geo";
+import type { Topology, GeometryCollection } from "topojson-specification";
+import { StablecoinSummary, STABLECOIN_CURRENCY } from "@/lib/types";
 
-function latLonToVector3(lat: number, lon: number, radius: number): [number, number, number] {
-  const phi = (90 - lat) * (Math.PI / 180);
-  const theta = (lon + 180) * (Math.PI / 180);
-  const x = -(radius * Math.sin(phi) * Math.cos(theta));
-  const y = radius * Math.cos(phi);
-  const z = radius * Math.sin(phi) * Math.sin(theta);
-  return [x, y, z];
+// ── Currency config ────────────────────────────────────────────────────────────
+
+const CURRENCY_COLOR: Record<string, string> = {
+  USD: "#9945FF", EUR: "#7C3AED", GBP: "#0891B2", CHF: "#DC2626",
+  BRL: "#16A34A", ZAR: "#D97706", JPY: "#DB2777", MXN: "#059669",
+  NGN: "#65A30D", TRY: "#EA580C",
+};
+
+const CURRENCY_LABEL: Record<string, string> = {
+  USD: "US Dollar", EUR: "Euro", GBP: "British Pound", CHF: "Swiss Franc",
+  BRL: "Brazilian Real", ZAR: "South African Rand", JPY: "Japanese Yen",
+  MXN: "Mexican Peso", NGN: "Nigerian Naira", TRY: "Turkish Lira",
+};
+
+const CURRENCY_TARGET_LON: Record<string, number> = {
+  USD: -95, EUR: 10, GBP: -2, CHF: 8, BRL: -51,
+  ZAR: 22, JPY: 138, MXN: -102, NGN: 8, TRY: 35,
+};
+
+const COUNTRY_CURRENCY: Record<number, string> = {
+  840: "USD", 218: "USD", 222: "USD", 591: "USD", 584: "USD",
+  583: "USD", 585: "USD", 626: "USD", 716: "USD", 850: "USD",
+  316: "USD", 580: "USD",
+  276: "EUR", 250: "EUR", 380: "EUR", 724: "EUR", 620: "EUR",
+  528: "EUR",  56: "EUR",  40: "EUR", 246: "EUR", 300: "EUR",
+  703: "EUR", 705: "EUR", 233: "EUR", 428: "EUR", 440: "EUR",
+  442: "EUR", 470: "EUR", 196: "EUR", 372: "EUR", 191: "EUR",
+  499: "EUR",  20: "EUR", 492: "EUR", 674: "EUR",
+  826: "GBP",
+  756: "CHF", 438: "CHF",
+   76: "BRL",
+  710: "ZAR", 426: "ZAR", 516: "ZAR", 748: "ZAR",
+  392: "JPY",
+  484: "MXN",
+  566: "NGN",
+  792: "TRY",
+};
+
+// ── Types ──────────────────────────────────────────────────────────────────────
+
+type WorldTopo = Topology<{ countries: GeometryCollection }>;
+
+// ── Texture builder ────────────────────────────────────────────────────────────
+
+function buildTexture(
+  world: WorldTopo,
+  activeCurrencies: Set<string>,
+  selected: string | null,
+  hovered: string | null,
+): THREE.CanvasTexture {
+  const W = 2048, H = 1024;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d")!;
+
+  // Ocean: dark
+  ctx.fillStyle = "#06060F";
+  ctx.fillRect(0, 0, W, H);
+
+  const projection = geoEquirectangular().scale(H / Math.PI).translate([W / 2, H / 2]);
+  const path = geoPath(projection, ctx);
+  const countries = topojson.feature(world, world.objects.countries) as GeoJSON.FeatureCollection;
+
+  for (const feature of countries.features) {
+    const id = Number(feature.id);
+    const currency = COUNTRY_CURRENCY[id];
+    const active = currency && activeCurrencies.has(currency);
+
+    ctx.beginPath();
+    path(feature as Parameters<typeof path>[0]);
+
+    let fill = "#1E1E3F";
+
+    if (active && currency) {
+      const hex = CURRENCY_COLOR[currency];
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+
+      if (selected) {
+        fill = currency === selected ? `rgba(${r},${g},${b},0.9)` : "#1E1E3F";
+      } else if (hovered) {
+        fill = currency === hovered ? `rgba(${r},${g},${b},0.9)` : `rgba(${r},${g},${b},0.2)`;
+      } else {
+        fill = `rgba(${r},${g},${b},0.7)`;
+      }
+    }
+
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.strokeStyle = "#0B0B1A";
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
 }
 
-function GlobeWireframe() {
-  const meshRef = useRef<THREE.Group>(null);
+// ── Globe mesh ─────────────────────────────────────────────────────────────────
+
+function GlobeMesh({
+  world,
+  activeCurrencies,
+  selected,
+  hovered,
+}: {
+  world: WorldTopo;
+  activeCurrencies: Set<string>;
+  selected: string | null;
+  hovered: string | null;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const targetRotRef = useRef<number | null>(null);
+
+  const texture = useMemo(
+    () => buildTexture(world, activeCurrencies, selected, hovered),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [world, [...activeCurrencies].sort().join(","), selected, hovered]
+  );
+
+  useEffect(() => () => { texture.dispose(); }, [texture]);
+
+  useEffect(() => {
+    if (selected && CURRENCY_TARGET_LON[selected] !== undefined && meshRef.current) {
+      const lon = CURRENCY_TARGET_LON[selected];
+      const base = (lon + 90) * (Math.PI / 180);
+      const current = meshRef.current.rotation.y;
+      const n = Math.round((current - base) / (2 * Math.PI));
+      targetRotRef.current = base + n * 2 * Math.PI;
+    } else {
+      targetRotRef.current = null;
+    }
+  }, [selected]);
 
   useFrame((_, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.05;
+    if (!meshRef.current) return;
+    if (selected) {
+      if (targetRotRef.current !== null) {
+        const diff = targetRotRef.current - meshRef.current.rotation.y;
+        if (Math.abs(diff) < 0.005) {
+          meshRef.current.rotation.y = targetRotRef.current;
+          targetRotRef.current = null;
+        } else {
+          meshRef.current.rotation.y += diff * Math.min(1, delta * 3);
+        }
+      }
+    } else {
+      meshRef.current.rotation.y += delta * 0.06;
     }
   });
 
-  const gridLines = useMemo(() => {
-    const lines: [number, number, number][][] = [];
-    // Latitude lines
-    for (let lat = -60; lat <= 60; lat += 30) {
-      const points: [number, number, number][] = [];
-      for (let lon = 0; lon <= 360; lon += 5) {
-        points.push(latLonToVector3(lat, lon, 2));
-      }
-      lines.push(points);
-    }
-    // Longitude lines
-    for (let lon = 0; lon < 360; lon += 30) {
-      const points: [number, number, number][] = [];
-      for (let lat = -90; lat <= 90; lat += 5) {
-        points.push(latLonToVector3(lat, lon, 2));
-      }
-      lines.push(points);
-    }
-    return lines;
-  }, []);
-
   return (
-    <group ref={meshRef}>
-      {/* Sphere body */}
-      <Sphere args={[1.98, 64, 64]}>
-        <meshPhongMaterial
-          color="#0B0B1A"
-          transparent
-          opacity={0.6}
-          side={THREE.DoubleSide}
-        />
-      </Sphere>
-      {/* Grid lines */}
-      {gridLines.map((points, i) => (
-        <Line
-          key={i}
-          points={points}
-          color="#1E1E3F"
-          lineWidth={0.5}
-          transparent
-          opacity={0.5}
-        />
-      ))}
-      {/* Glow ring */}
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[2.05, 0.005, 16, 100]} />
-        <meshBasicMaterial color="#9945FF" transparent opacity={0.3} />
+    <>
+      <mesh ref={meshRef}>
+        <sphereGeometry args={[2, 64, 64]} />
+        <meshPhongMaterial map={texture} shininess={8} />
       </mesh>
-    </group>
+      <mesh>
+        <sphereGeometry args={[2.08, 32, 32]} />
+        <meshBasicMaterial color="#9945FF" transparent opacity={0.04} side={THREE.BackSide} />
+      </mesh>
+    </>
   );
 }
 
-interface IssuerMarkerProps {
-  info: StablecoinIssuerInfo;
-  coin?: StablecoinSummary;
-  symbol: string;
-}
+// ── Legend ─────────────────────────────────────────────────────────────────────
 
-function IssuerMarker({ info, coin, symbol }: IssuerMarkerProps) {
-  const position = useMemo(
-    () => latLonToVector3(info.coordinates[1], info.coordinates[0], 2.05),
-    [info.coordinates]
-  );
-
-  const color = getStablecoinColor(symbol);
-
+function Legend({
+  activeCurrencies,
+  selected,
+  hovered,
+  onSelect,
+  onHover,
+}: {
+  activeCurrencies: Set<string>;
+  selected: string | null;
+  hovered: string | null;
+  onSelect: (c: string | null) => void;
+  onHover: (c: string | null) => void;
+}) {
+  const entries = Object.entries(CURRENCY_COLOR).filter(([c]) => activeCurrencies.has(c));
   return (
-    <group position={position}>
-      {/* Point */}
-      <mesh>
-        <sphereGeometry args={[0.04, 16, 16]} />
-        <meshBasicMaterial color={color} />
-      </mesh>
-      {/* Pulse ring */}
-      <mesh>
-        <ringGeometry args={[0.05, 0.07, 32]} />
-        <meshBasicMaterial color={color} transparent opacity={0.4} side={THREE.DoubleSide} />
-      </mesh>
-      {/* Label */}
-      <Html distanceFactor={6} style={{ pointerEvents: "none" }}>
-        <div className="bg-sol-dark/90 backdrop-blur-sm border border-sol-border rounded-lg px-3 py-2 whitespace-nowrap shadow-xl">
-          <div className="flex items-center gap-2 mb-1">
+    <div
+      className="absolute bottom-3 right-3 flex flex-col gap-1"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {entries.map(([currency, color]) => {
+        const isSelected = selected === currency;
+        const isDimmed = (selected && !isSelected) || (hovered && hovered !== currency && !selected);
+        return (
+          <button
+            key={currency}
+            onMouseEnter={() => onHover(currency)}
+            onMouseLeave={() => onHover(null)}
+            onClick={() => onSelect(isSelected ? null : currency)}
+            className={`flex items-center gap-1.5 rounded-md px-2 py-1 shadow-sm text-left transition-all backdrop-blur-sm hover:opacity-100 ${
+              isSelected
+                ? "bg-sol-card/90 ring-1 ring-inset opacity-100"
+                : isDimmed
+                ? "bg-sol-card/50 opacity-40"
+                : "bg-sol-card/80 opacity-100"
+            }`}
+            style={isSelected ? { ringColor: color } as React.CSSProperties : {}}
+          >
             <div
-              className="w-2.5 h-2.5 rounded-full"
-              style={{ backgroundColor: color }}
+              className="w-2.5 h-2.5 rounded-sm flex-shrink-0 transition-transform"
+              style={{
+                backgroundColor: color,
+                transform: isSelected ? "scale(1.2)" : "scale(1)",
+              }}
             />
-            <span className="text-xs font-bold text-sol-text">{symbol}</span>
-          </div>
-          {coin && (
-            <div className="text-[10px] text-sol-text-muted">
-              Supply: {formatCurrency(coin.current_supply)}
-            </div>
-          )}
-          <div className="text-[10px] text-sol-text-muted">{info.region}</div>
-        </div>
-      </Html>
-    </group>
+            <span className="text-[10px] font-medium text-sol-text">
+              {CURRENCY_LABEL[currency]}
+            </span>
+            {isSelected && (
+              <span className="ml-auto text-[9px] text-sol-text-muted">×</span>
+            )}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
-interface GlobeVisualizationProps {
-  stablecoins?: StablecoinSummary[];
-  height?: string;
-}
+// ── Public component ───────────────────────────────────────────────────────────
 
 export default function GlobeVisualization({
   stablecoins,
-  height = "500px",
-}: GlobeVisualizationProps) {
-  const coinMap = useMemo(() => {
-    const map = new Map<string, StablecoinSummary>();
-    if (stablecoins) {
-      stablecoins.forEach((c) => map.set(c.symbol, c));
+  height = "380px",
+  selectedCurrency = null,
+  onCurrencySelect,
+}: {
+  stablecoins?: StablecoinSummary[];
+  height?: string;
+  selectedCurrency?: string | null;
+  onCurrencySelect?: (currency: string | null) => void;
+}) {
+  const [world, setWorld] = useState<WorldTopo | null>(null);
+  const [hoveredCurrency, setHoveredCurrency] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/countries-110m.json").then((r) => r.json()).then(setWorld);
+  }, []);
+
+  const activeCurrencies = useMemo(() => {
+    const set = new Set<string>();
+    if (stablecoins?.length) {
+      for (const coin of stablecoins) {
+        const c = STABLECOIN_CURRENCY[coin.symbol];
+        if (c && CURRENCY_COLOR[c]) set.add(c);
+      }
+    } else {
+      Object.keys(CURRENCY_COLOR).forEach((c) => set.add(c));
     }
-    return map;
+    return set;
   }, [stablecoins]);
 
+  if (!world) {
+    return (
+      <div style={{ height, width: "100%" }} className="flex items-center justify-center bg-sol-dark rounded-b-xl">
+        <div className="animate-pulse w-40 h-40 rounded-full bg-sol-card" />
+      </div>
+    );
+  }
+
   return (
-    <div style={{ height, width: "100%" }} className="relative">
-      <Canvas camera={{ position: [0, 1, 5], fov: 45 }}>
-        <ambientLight intensity={0.3} />
-        <pointLight position={[10, 10, 10]} intensity={0.8} color="#9945FF" />
-        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#14F195" />
-        <GlobeWireframe />
-        {Object.entries(STABLECOIN_ISSUERS).map(([symbol, info]) => (
-          <IssuerMarker
-            key={symbol}
-            symbol={symbol}
-            info={info}
-            coin={coinMap.get(symbol)}
-          />
-        ))}
+    <div
+      style={{ height, width: "100%" }}
+      className="relative bg-sol-dark rounded-b-xl overflow-hidden cursor-default"
+      onClick={() => onCurrencySelect?.(null)}
+    >
+      <Canvas camera={{ position: [0, 0.5, 5.5], fov: 42 }}>
+        <ambientLight intensity={0.8} />
+        <pointLight position={[8, 6, 8]} intensity={0.6} color="#9945FF" />
+        <GlobeMesh
+          world={world}
+          activeCurrencies={activeCurrencies}
+          selected={selectedCurrency}
+          hovered={hoveredCurrency}
+        />
         <OrbitControls
-          enableZoom={true}
+          enableZoom
           enablePan={false}
           minDistance={3.5}
           maxDistance={8}
-          autoRotate
-          autoRotateSpeed={0.3}
+          autoRotate={!selectedCurrency}
+          autoRotateSpeed={0.4}
         />
       </Canvas>
-      {/* Overlay gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-sol-darker to-transparent pointer-events-none" />
+      <Legend
+        activeCurrencies={activeCurrencies}
+        selected={selectedCurrency}
+        hovered={hoveredCurrency}
+        onSelect={(c) => onCurrencySelect?.(c)}
+        onHover={setHoveredCurrency}
+      />
     </div>
   );
 }
